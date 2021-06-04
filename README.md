@@ -1,2 +1,3 @@
 # faction-wars
-discord bot for faction wars discord.py
+Official code for discord bot and website for the Faction Wars Stormbound Tournament
+
