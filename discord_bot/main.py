@@ -3,6 +3,7 @@ from discord.ext import commands
 import json
 import csv 
 from keep_alive import keep_alive
+import os
 
 client = commands.Bot(command_prefix='f')
 
@@ -72,10 +73,10 @@ async def config(context):
                 with open('scores.csv', 'a+', encoding='UTF8') as filee:
                     writer = csv.writer(filee)
                     writer.writerow(data)
-            sf_count = 1
-            se_count = 1
-            ic_count = 1
-            wp_count = 1
+            sf_count = 0
+            se_count = 0
+            ic_count = 0
+            wp_count = 0
             with open("scores.csv", 'r') as csvfile:
               datareader = csv.reader(csvfile)
               for row in datareader:
@@ -90,11 +91,23 @@ async def config(context):
                   sf_count = sf_count+1
             #maths
             math_count = (sf_count*(ic_count+se_count+wp_count))+(ic_count*(sf_count+se_count+wp_count))+(se_count*(ic_count+sf_count+wp_count))+(wp_count*(ic_count+sf_count+se_count))
-            sf_points = round(math_count/(sf_count*(ic_count+se_count+wp_count)), 1)
-            ic_points = round(math_count/(ic_count*(sf_count+se_count+wp_count)), 1)
-            se_points = round(math_count/(se_count*(ic_count+sf_count+wp_count)), 1)
-            wp_points = round(math_count/(wp_count*(ic_count+sf_count+se_count)), 1)
-            configEmbed.add_field(name="Player Counts: SF = " + str(sf_count-1) + " SE = " + str(se_count-1) + " IC = " + str(ic_count-1) + " WP = " + str(wp_count-1) + " Point Amounts(Per Faction)", value="SF: " + str(sf_points) + ", IC: " + str(ic_points) + ", SE: " + str(se_points) + ", WP: " + str(wp_points))
+            if sf_count == 0:
+              sf_points = 0
+            else:
+              sf_points = round(math_count/(sf_count*(ic_count+se_count+wp_count)), 1)
+            if ic_count == 0:
+              ic_points = 0
+            else:
+              ic_points = round(math_count/(ic_count*(sf_count+se_count+wp_count)), 1)
+            if se_count == 0:
+              se_points = 0
+            else:
+              se_points = round(math_count/(se_count*(ic_count+sf_count+wp_count)), 1)
+            if wp_count == 0:
+              wp_points = 0
+            else:
+              wp_points = round(math_count/(wp_count*(ic_count+sf_count+se_count)), 1)
+            configEmbed.add_field(name="Player Counts: SF = " + str(sf_count) + " SE = " + str(se_count) + " IC = " + str(ic_count) + " WP = " + str(wp_count) + " Point Amounts(Per Faction)", value="SF: " + str(sf_points) + ", IC: " + str(ic_points) + ", SE: " + str(se_points) + ", WP: " + str(wp_points))
             await context.message.channel.send(embed=configEmbed)
             #update points to json 
             with open("points.json", "r") as jsonFile:
@@ -118,4 +131,4 @@ keep_alive()
 
 
 #bot token
-client.run("token")
+client.run(os.environ['token-bot'])
